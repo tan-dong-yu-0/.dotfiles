@@ -10,7 +10,7 @@ Plug 'cohama/lexima.vim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 
-" treesitter
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-
 call plug#end()
+
+lua require ('packer-context')
+lua require ('treesitter')
