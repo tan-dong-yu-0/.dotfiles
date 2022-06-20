@@ -10,10 +10,18 @@ Plug 'cohama/lexima.vim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 
-" codi.vim(quokka like plugin for nvim)
-Plug 'metakirby5/codi.vim'
+" fugitive
+Plug 'tpope/vim-fugitive'
+
+" codi.vim(quokka like, only works in js)
+" Plug 'metakirby5/codi.vim'
+
 call plug#end()
 
 lua require ('packer-context')
 lua require ('treesitter')
 lua require ('lsp')
+lua require ('lspcolors')
+lua require ('lualinesetup')
+lua require ('luasnipsetup')
+
