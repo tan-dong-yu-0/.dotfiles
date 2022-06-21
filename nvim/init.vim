@@ -24,4 +24,4 @@ lua require ('lsp')
 lua require ('lspcolors')
 lua require ('lualinesetup')
 lua require ('luasnipsetup')
-
+lua require ('comment')

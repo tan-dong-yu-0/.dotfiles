@@ -19,6 +19,14 @@ return require('packer').startup(function()
   use 'jose-elias-alvarez/null-ls.nvim'
   use 'folke/lsp-colors.nvim'
 
+  -- Comment nvim
+  use {
+    'numToStr/Comment.nvim',
+    config = function()
+      require('Comment').setup()
+    end
+  }
+
   -- Snippets
   use 'rafamadriz/friendly-snippets'
 

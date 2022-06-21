@@ -1,9 +1,22 @@
+local function diff_source()
+  local gitsigns = vim.b.gitsigns_status_dict
+  if gitsigns then
+    return {
+      added = gitsigns.added,
+      modified = gitsigns.changed,
+      removed = gitsigns.removed,
+    }
+  end
+end
+
 require('lualine').setup {
   options = {
     icons_enabled = true,
     theme = 'gruvbox',
-    component_separators = { left = '', right = '' },
-    section_separators = { left = '', right = '' },
+    --   component_separators = { left = '', right = '' },
+    --   section_separators = { left = '', right = '' },
+    component_separators = { left = '', right = '' },
+    section_separators = { left = '', right = '' },
     disabled_filetypes = {},
     always_divide_middle = true,
     globalstatus = false,
@@ -35,9 +48,19 @@ require('lualine').setup {
         always_visible = false, -- Show diagnostics even if there are none.
       }
     },
-    lualine_b = { 'branch', 'diff', 'diagnostics' },
-    lualine_c = { 'filename' },
-    lualine_x = { {
+    lualine_b = { 'branch', 'diff' },
+    lualine_c = { {
+      "diff",
+      source = diff_source,
+      symbols = { added = "  ", modified = " ", removed = " " },
+      diff_color = {
+        added = { fg = "#98be65" },
+        modified = { fg = "#ECBE7B" },
+        removed = { fg = "#ec5f67" },
+      },
+      cond = nil,
+    }, 'filename', },
+    lualine_x = { "diagnostics", {
       function(msg)
         msg = msg or "LS Inactive"
         local buf_clients = vim.lsp.buf_get_clients()

@@ -40,6 +40,11 @@ vim.diagnostic.config({
       return t.message
     end,
   },
+  peek = {
+    max_height = 15,
+    max_width = 30,
+    context = 10,
+  },
 })
 
 local lsp_flags = {
