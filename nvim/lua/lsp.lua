@@ -5,10 +5,54 @@ require('cmp').setup {
   },
 }
 
-local on_attach = function(client)
+vim.cmd [[autocmd! ColorScheme * highlight NormalFloat guibg=#1f2335]]
+
+vim.cmd [[autocmd! ColorScheme * highlight FloatBorder guifg=white guibg=#1f2335]]
+-- You will likely want to reduce updatetime which affects CursorHold
+-- note: this setting is global and should be set only once
+vim.o.updatetime = 250
+vim.cmd [[autocmd! CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
+
+-- Mappings.
+-- See `:help vim.diagnostic.*` for documentation on any of the below functions
+local opts = { noremap = true, silent = true }
+vim.keymap.set('n', 'gl', vim.diagnostic.open_float, opts)
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
+
+vim.diagnostic.config({
+  virtual_text = {
+    source = "always", -- Or "if_many"
+  },
+  float = {
+    source = "always", -- Or "if_many"
+    border = "rounded",
+    style = "minimal",
+    prefix = "",
+    header = "",
+    format = function(d)
+      local t = vim.deepcopy(d)
+      local code = d.code or (d.user_data and d.user_data.lsp.code)
+      if code then
+        t.message = string.format("%s [%s]", t.message, code):gsub("1. ", "")
+      end
+      return t.message
+    end,
+  },
+})
+
+local lsp_flags = {
+  -- This is the default in Nvim 0.7+
+  debounce_text_changes = 150,
+}
+
+local on_attach = function(client, bufnr)
   if client.resolved_capabilities.document_formatting then
     vim.cmd("autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()")
   end
+  -- Enable completion triggered by <c-x><c-o>
+  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 end
 
 local tabnine = require('cmp_tabnine.config')
@@ -50,8 +94,8 @@ cmp.setup({
     --    luasnip.expand_or_jump()
     -- elseif has_words_before() then
     --   cmp.complete()
-    -- else
     --   fallback()
+    -- else
     -- end
     -- end, { "i", "s" }),
 
@@ -74,6 +118,7 @@ cmp.setup({
     format = lspkind.cmp_format({
       mode = 'symbol', -- show symbol and text annotations
       maxwidth = 100, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+      border = "rounded",
 
       -- The function below will be called before any actual modifications from lspkind
       -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
@@ -103,71 +148,16 @@ cmp.setup({
 -- Setup lspconfig.
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-require('lspconfig')['tsserver'].setup { on_attach = on_attach, capabilities = capabilities }
+require('lspconfig')['tsserver'].setup { on_attach = on_attach, capabilities = capabilities, flags = lsp_flags }
 
-require('lspconfig')['diagnosticls'].setup {
-  on_attach = on_attach,
-  filetypes = { 'javascript', 'javascriptreact', 'json', 'typescript', 'typescriptreact', 'css', 'less', 'scss', 'pandoc' },
-  init_options = {
-    linters = {
-      eslint = {
-        command = 'eslint_d',
-        rootPatterns = { '.git' },
-        debounce = 100,
-        args = { '--stdin', '--stdin-filename', '%filepath', '--format', 'json' },
-        sourceName = 'eslint_d',
-        parseJson = {
-          errorsRoot = '[0].messages',
-          line = 'line',
-          column = 'column',
-          endLine = 'endLine',
-          endColumn = 'endColumn',
-          message = '[eslint] ${message} [${ruleId}]',
-          security = 'severity'
-        },
-        securities = {
-          [2] = 'error',
-          [1] = 'warning'
-        }
-      },
-    },
-    filetypes = {
-      javascript = 'eslint',
-      javascriptreact = 'eslint',
-      typescript = 'eslint',
-      typescriptreact = 'eslint',
-    },
-    formatters = {
-      eslint_d = {
-        command = 'eslint_d',
-        rootPatterns = { '.git' },
-        args = { '--stdin', '--stdin-filename', '%filename', '--fix-to-stdout' },
-      },
-      prettier = {
-        command = 'prettier_d_slim',
-        rootPatterns = { '.git' },
-        -- requiredFiles: { 'prettier.config.js' },
-        args = { '--stdin', '--stdin-filepath', '%filename' }
-      }
-    },
-    formatFiletypes = {
-      css = 'prettier',
-      javascript = 'prettier',
-      javascriptreact = 'prettier',
-      json = 'prettier',
-      scss = 'prettier',
-      less = 'prettier',
-      typescript = 'prettier',
-      typescriptreact = 'prettier',
-    }
-  }
-}
+-- lua
 
 local sumneko_root_path = "/home/dytan/lua-language-server"
 local sumneko_binary = sumneko_root_path .. "/bin/lua-language-server"
 require('lspconfig')['sumneko_lua'].setup({
   cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
   capabilities = capabilities,
+  flags = lsp_flags,
   settings = {
     Lua = {
       runtime = { version = 'LuaJIT', path = vim.split(package.path, ';') },
@@ -191,3 +181,20 @@ require('lspconfig')['sumneko_lua'].setup({
   },
   on_attach = on_attach
 })
+
+-- jsonls
+local jsoncapabilities = vim.lsp.protocol.make_client_capabilities()
+jsoncapabilities.textDocument.completion.completionItem.snippetSupported = true
+
+require('lspconfig')['jsonls'].setup {
+  jsoncapabilities = jsoncapabilities,
+  flags = lsp_flags,
+  -- capabilities = capabilities,
+  on_attach = on_attach,
+  cmd = { "vscode-json-language-server", "--stdio" },
+  filetypes = { "json", "jsonc" },
+  init_options = {
+    provideFormatter = true
+  },
+  single_file_support = true
+}
