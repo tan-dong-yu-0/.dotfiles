@@ -48,7 +48,7 @@ require('lualine').setup {
         always_visible = false, -- Show diagnostics even if there are none.
       }
     },
-    lualine_b = { 'branch', 'diff' },
+    lualine_b = { 'branch', },
     lualine_c = { {
       "diff",
       source = diff_source,
@@ -71,7 +71,7 @@ require('lualine').setup {
           end
           return msg
         end
-        local buf_ft = vim.bo.filetype
+        -- local buf_ft = vim.bo.filetype
         local buf_client_names = {}
 
         -- add client

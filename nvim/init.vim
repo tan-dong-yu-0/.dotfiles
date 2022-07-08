@@ -16,6 +16,9 @@ Plug 'tpope/vim-fugitive'
 " codi.vim(quokka like, only works in js)
 " Plug 'metakirby5/codi.vim'
 
+" nvimcolorizer
+Plug 'norcalli/nvim-colorizer.lua'
+
 call plug#end()
 
 lua require ('packer-context')
@@ -25,3 +28,4 @@ lua require ('lspcolors')
 lua require ('lualinesetup')
 lua require ('luasnipsetup')
 lua require ('comment')
+" lua require ('gitsignssetup')

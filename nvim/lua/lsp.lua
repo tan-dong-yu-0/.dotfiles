@@ -193,6 +193,7 @@ jsoncapabilities.textDocument.completion.completionItem.snippetSupported = true
 
 require('lspconfig')['jsonls'].setup {
   jsoncapabilities = jsoncapabilities,
+  capabilities = capabilities,
   flags = lsp_flags,
   -- capabilities = capabilities,
   on_attach = on_attach,
@@ -201,5 +202,28 @@ require('lspconfig')['jsonls'].setup {
   init_options = {
     provideFormatter = true
   },
+  single_file_support = true
+}
+
+-- html
+local htmlcapabilities = vim.lsp.protocol.make_client_capabilities()
+htmlcapabilities.textDocument.completion.completionItem.snippetSupported = true
+
+require('lspconfig')['html'].setup {
+  htmlcapabilities = htmlcapabilities,
+  capabilities = capabilities,
+  on_attach = on_attach,
+  flags = lsp_flags,
+  cmd = { "vscode-html-language-server", "--stdio" },
+  filetypes = { "html" },
+  init_options = {
+    configurationSection = { "html", "css", "javascript" },
+    embeddedLanguages = {
+      css = true,
+      javascript = true
+    },
+    provideFormatter = true
+  },
+  settings = {},
   single_file_support = true
 }

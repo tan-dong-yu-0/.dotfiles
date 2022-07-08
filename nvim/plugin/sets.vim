@@ -20,25 +20,29 @@ set scrolloff=8
 set cmdheight=1
 set updatetime=50
 set ts=2 sw=2
-set clipboard=unnamedplus
+set clipboard+=unnamedplus
 set splitright
-set splitbelow 
+set splitbelow
 set noshowmode
-set showtabline=2
+" set paste
+" set showtabline=2
 
 " set transparent nvim background
 au ColorScheme * hi Normal ctermbg=none guibg=NonText
 au ColorScheme myspecialcolor hi Normal ctermbg=red guibg=red
 
+" prevent commenting on new line
+autocmd FileType * set formatoptions-=o
+
 " turn terminal to normal mode with escape key
-tnoremap <ESC> <C-\><C-n>
+" tnoremap <ESC> <C-\><C-n>
 
 " open terminal with ctrl+n
-function! OpenTerminal()
-  split term://bash
-  resize 10
-endfunction
-nnoremap <A-n> :call OpenTerminal()<CR>
+" function! OpenTerminal()
+"   split term://bash
+"   resize 10
+" endfunction
+" nnoremap <A-n> :call OpenTerminal()<CR>
 
 " colorscheme(theme)
 let g:gruvbox_contrast_dark = "medium"

@@ -1,7 +1,11 @@
 local ls = require('luasnip')
 
-require("luasnip.loaders.from_vscode").load({ include = { "html", "javascript", "typescript", "java", "typescriptreact",
-  "javascriptreact", "json" } }) -- Load snippets from vscode
+require("luasnip.loaders.from_vscode").load({ include =
+{
+  "html", "javascript", "typescript", "java", "typescriptreact",
+  "javascriptreact", "json", "rust", "go"
+}
+}) -- Load snippets from vscode
 
 ls.config.set_config({
   history = true,
@@ -23,12 +27,12 @@ vim.keymap.set({ "i", "s" }, "<a-p>", function()
   end
 end, { silent = true })
 
-vim.keymap.set({ "i", "s" }, "<a-k>", function()
+vim.keymap.set({ "i", "s" }, "<C-k>", function()
   if ls.jumpable(1) then
     ls.jump(1)
   end
 end, { silent = true })
-vim.keymap.set({ "i", "s" }, "<a-j>", function()
+vim.keymap.set({ "i", "s" }, "<C-j>", function()
   if ls.jumpable(-1) then
     ls.jump(-1)
   end

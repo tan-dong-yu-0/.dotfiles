@@ -27,6 +27,7 @@ return require('packer').startup(function()
     end
   }
 
+
   -- Snippets
   use 'rafamadriz/friendly-snippets'
 
@@ -35,6 +36,9 @@ return require('packer').startup(function()
     "windwp/nvim-autopairs",
     config = function() require("nvim-autopairs").setup {} end
   }
+
+  -- gitsigns
+  use { 'lewis6991/gitsigns.nvim' }
 
   -- popup nvim
   use { "nvim-lua/popup.nvim" }
